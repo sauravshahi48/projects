@@ -1,0 +1,9 @@
+{
+  "country_code": "IN",
+  "store_name": "India Marketplace",
+  "default_language": "en-IN",
+  "currency": "INR",
+  "tax_rate": 0.18,
+  "enabled_features": ["catalog", "checkout", "wallets"],
+  "marketplace_domain": "india.example.com"
+}
