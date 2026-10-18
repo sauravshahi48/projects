@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Ask questions across your documents and inspect the supporting source pages.">
+  <title>SourceDesk · Document assistant</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+  <script src="/assets/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="SourceDesk home"><span class="brand-mark">S<span>↗</span></span>SourceDesk<span class="brand-tag">DOCUMENT ASSISTANT</span></a>
+    <div class="topbar-right"><span id="mode-badge" class="mode-badge"><i></i>Connecting</span><a href="/docs" target="_blank" rel="noopener">API docs <span aria-hidden="true">↗</span></a></div>
+  </header>
+
+  <div class="workspace">
+    <aside class="sidebar" aria-label="Document library">
+      <div class="section-kicker">YOUR WORKSPACE</div>
+      <div class="library-heading"><h2>Knowledge base</h2><span id="document-count" class="count">0</span></div>
+      <p class="sidebar-description">Add the documents you want to explore.</p>
+      <label class="dropzone" id="dropzone" for="file-input" tabindex="0" role="button" aria-label="Choose documents to upload">
+        <span class="upload-icon" aria-hidden="true">↑</span>
+        <strong>Drop your files here</strong>
+        <span>or <b>browse files</b></span>
+        <small>PDF, TXT, MD · up to 10 MB each</small>
+      </label>
+      <input type="file" id="file-input" accept=".pdf,.txt,.md" multiple class="visually-hidden">
+      <p id="upload-status" class="upload-status" role="status"></p>
+      <div id="document-list" class="document-list"></div>
+      <div id="empty-library" class="empty-library">Your documents will appear here.<br>Try the sample company policies below.</div>
+      <button class="demo-button" id="demo-button"><span aria-hidden="true">✦</span> Load sample documents</button>
+      <div class="sidebar-bottom"><span class="privacy-icon" aria-hidden="true">◇</span><div><strong id="privacy-title">Local by default</strong><p id="privacy-description">Files and search stay on this computer in the default mode.</p></div></div>
+    </aside>
+
+    <main>
+      <div class="main-top"><div><span class="breadcrumb">Workspace</span><span class="breadcrumb-slash">/</span>Ask your documents</div><span class="workspace-tag">PERSONAL WORKSPACE</span></div>
+
+      <section class="hero">
+        <div class="hero-kicker"><span></span>ANSWERS WITH EVIDENCE</div>
+        <h1>Find the answer.<br><span>Follow the source.</span></h1>
+        <p>Explore your documents in plain English.<br>Every result takes you back to the page it came from.</p>
+      </section>
+
+      <section class="question-section" aria-label="Ask a question">
+        <form id="question-form" class="question-box">
+          <label for="question" class="visually-hidden">Your question</label>
+          <textarea id="question" maxlength="1000" rows="2" placeholder="What would you like to know?" required></textarea>
+          <div class="question-controls"><label class="scope-label"><span aria-hidden="true">▤</span><select id="scope" aria-label="Search scope"><option value="all">All documents</option></select></label><button id="ask-button" class="ask-button" type="submit">Ask question <span aria-hidden="true">↗</span></button></div>
+        </form>
+        <div class="suggestions"><span>Try asking</span><button data-question="How many days of annual leave do employees receive?">Annual leave allowance <span>↗</span></button><button data-question="What is the laptop reimbursement limit?">Laptop reimbursement <span>↗</span></button><button data-question="How quickly must a security incident be reported?">Security incident reporting <span>↗</span></button></div>
+      </section>
+
+      <div id="feedback" class="feedback" role="status" aria-live="polite"></div>
+
+      <section id="answer-panel" class="answer-panel" hidden aria-label="Search result" aria-live="polite">
+        <div class="result-topline"><div><span class="result-dot"></span><span id="result-type">Source passages</span></div><span id="latency"></span></div>
+        <h2 id="asked-question"></h2>
+        <p id="answer-text" class="answer-text"></p>
+        <p id="result-notice" class="result-notice" hidden></p>
+        <div id="sources-heading" class="sources-heading"><h3>Supporting sources</h3><span id="sources-count"></span></div>
+        <div id="sources" class="sources-grid"></div>
+        <div class="result-footer"><span id="retrieval-label"></span><button id="download-answer" type="button">Download result ↓</button></div>
+      </section>
+
+      <section id="how-it-works" class="how-it-works">
+        <div class="how-heading"><span>FROM QUESTION TO SOURCE</span><div></div></div>
+        <div class="steps"><article><span class="step-number">01</span><h3>Add your documents</h3><p>Upload readable PDFs, text files or Markdown to your knowledge base.</p></article><article><span class="step-number">02</span><h3>Ask in your own words</h3><p>Search across every document, or focus on a single file.</p></article><article><span class="step-number">03</span><h3>Inspect the evidence</h3><p>Read the supporting passages and open the original source page.</p></article></div>
+      </section>
+
+      <footer class="main-footer"><span>Built to make answers inspectable.</span><span id="engine-label">Offline retrieval · No API key needed</span></footer>
+    </main>
+  </div>
+</body>
+</html>

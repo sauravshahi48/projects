@@ -1,0 +1,34 @@
+{
+  "billing": [
+    "You billed my subscription twice this week",
+    "Could you email me a copy of the paid invoice",
+    "My renewal payment failed with the saved card",
+    "I am waiting for the promised refund",
+    "An unexpected fee appears on the receipt",
+    "How do I update the card used for billing"
+  ],
+  "account": [
+    "I need a new password reset email",
+    "My profile is locked and login is impossible",
+    "The authentication code does not reach my phone",
+    "Can you recover access to my previous account",
+    "I would like to replace my registered email address",
+    "How do I deactivate the account I created"
+  ],
+  "technical": [
+    "Opening the dashboard causes the app to crash",
+    "The API request fails with a server timeout",
+    "The PDF upload freezes the browser window",
+    "After installing the update the screen stays blank",
+    "Exporting a report produces a software error",
+    "The search page loads extremely slowly"
+  ],
+  "orders": [
+    "The shipment tracking says delivered but the box is missing",
+    "My parcel arrived with a broken product",
+    "Please cancel the order before the courier collects it",
+    "Can I exchange the delivered item for a larger size",
+    "I need the delivery address on my order changed",
+    "When will the warehouse dispatch my package"
+  ]
+}

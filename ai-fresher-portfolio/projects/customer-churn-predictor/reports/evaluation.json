@@ -1,0 +1,120 @@
+{
+  "dataset": "UCI Iranian Churn",
+  "doi": "10.24432/C5JW3Z",
+  "license": "CC BY 4.0",
+  "csv_sha256": "90d5fb6bd1630cd4de4b4d28fcf8b4cb92a8f6ab7484605b0799d47386f7dbe1",
+  "original_rows": 3150,
+  "deduplicated_rows": 2850,
+  "removed_duplicate_rows": 300,
+  "features": [
+    "call_failures",
+    "complaints",
+    "subscription_months",
+    "charge_band",
+    "seconds_of_use",
+    "call_frequency",
+    "sms_frequency",
+    "distinct_numbers",
+    "tariff_plan"
+  ],
+  "excluded_features": [
+    "Status",
+    "Customer Value",
+    "Age",
+    "Age Group"
+  ],
+  "split": {
+    "train": 1707,
+    "validation": 574,
+    "test": 569
+  },
+  "class_prevalence": {
+    "train": 0.15582893966022263,
+    "validation": 0.15853658536585366,
+    "test": 0.15641476274165203
+  },
+  "identical_feature_groups_disjoint": true,
+  "validation_average_precision": {
+    "dummy_prior": 0.15853658536585366,
+    "logistic_regression": 0.744234433048106,
+    "random_forest": 0.8537535711930283
+  },
+  "selected_model": "random_forest",
+  "threshold": 0.6,
+  "threshold_selection": "Maximum validation F1 over 33 fixed candidate thresholds; no refit on validation.",
+  "test_metrics": {
+    "average_precision": 0.8644580131396755,
+    "roc_auc": 0.9697916666666667,
+    "precision": 0.74,
+    "recall": 0.8314606741573034,
+    "f1": 0.783068783068783,
+    "balanced_accuracy": 0.8886470037453184,
+    "confusion_matrix": [
+      [
+        454,
+        26
+      ],
+      [
+        15,
+        74
+      ]
+    ]
+  },
+  "dummy_test_metrics": {
+    "average_precision": 0.15641476274165203,
+    "roc_auc": 0.5,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "balanced_accuracy": 0.5,
+    "confusion_matrix": [
+      [
+        480,
+        0
+      ],
+      [
+        89,
+        0
+      ]
+    ]
+  },
+  "global_feature_signals": [
+    {
+      "feature": "call_frequency",
+      "importance": 0.20495575714036957
+    },
+    {
+      "feature": "complaints",
+      "importance": 0.1921117402800161
+    },
+    {
+      "feature": "seconds_of_use",
+      "importance": 0.18864993984874523
+    },
+    {
+      "feature": "sms_frequency",
+      "importance": 0.12963934124561347
+    },
+    {
+      "feature": "distinct_numbers",
+      "importance": 0.08873627641832073
+    },
+    {
+      "feature": "subscription_months",
+      "importance": 0.08871543820123753
+    },
+    {
+      "feature": "call_failures",
+      "importance": 0.061598499574303085
+    },
+    {
+      "feature": "charge_band",
+      "importance": 0.04438521776078873
+    },
+    {
+      "feature": "tariff_plan",
+      "importance": 0.0012077895306056262
+    }
+  ],
+  "limitations": "Historical single-company dataset and random grouped holdout. No prospective validation, causal effect, or retention savings are established. Scores are not calibrated."
+}

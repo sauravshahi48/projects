@@ -1,0 +1,9 @@
+{
+  "dataset": "Iranian Churn",
+  "source": "https://archive.ics.uci.edu/static/public/563/iranian+churn+dataset.zip",
+  "doi": "10.24432/C5JW3Z",
+  "license": "CC BY 4.0",
+  "sha256": "90d5fb6bd1630cd4de4b4d28fcf8b4cb92a8f6ab7484605b0799d47386f7dbe1",
+  "downloaded_on": "2026-10-18",
+  "modifications": "Original CSV bytes retained. Feature exclusions and duplicate handling are documented in README."
+}

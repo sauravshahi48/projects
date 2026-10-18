@@ -1,0 +1,21 @@
+name: Portfolio tests
+on: [push, pull_request]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        project: [company-document-assistant, support-ticket-classifier, customer-churn-predictor]
+    defaults:
+      run:
+        working-directory: projects/${{ matrix.project }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - if: matrix.project == 'company-document-assistant'
+        run: python -m pip install -e ".[dev]"
+      - if: matrix.project != 'company-document-assistant'
+        run: python -m pip install -r requirements-dev.txt
+      - run: python -m pytest -q

@@ -1,0 +1,2 @@
+-e ./projects/company-document-assistant
+pandas>=2.2,<4
