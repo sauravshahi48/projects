@@ -1,188 +1,148 @@
-"""Generate fictional UPI-style activity and evaluate a review queue."""
+"""Analyze government-reported UPI payments and reported fraud totals."""
+
+import argparse
 import csv
-import json
-import random
+import math
 import sqlite3
-from collections import defaultdict
-from datetime import datetime, timedelta, timezone
+from contextlib import closing
+from datetime import date
+from decimal import Decimal, InvalidOperation
 from pathlib import Path
-from statistics import median
 
 ROOT = Path(__file__).resolve().parent
-DAY = 24 * 60 * 60
-EVAL_START = 18 * DAY
-EPOCH = datetime(2025, 7, 1, tzinfo=timezone(timedelta(hours=5, minutes=30)))
-SEED = 83
-CATEGORIES = {"Cafe": 12_000, "Grocery": 30_000, "Transit": 3_500, "Retail": 60_000}
-PAIR_LIMIT = 4
-MERCHANT_LIMIT = 9
-OUTLIER_LIMIT = 4.5
+CRORE = 10_000_000
+LAKH = 100_000
 
 
-def generate():
-    rng = random.Random(SEED)
-    merchants = [
-        (f"M{i + 1:02}", category, typical)
-        for i, (category, typical) in enumerate(list(CATEGORIES.items()) * 8)
-    ]
-    transactions = []
-
-    def add(second, customer, merchant, paise, label="normal"):
-        transactions.append(
-            (len(transactions) + 1, second, customer, merchant, paise, label)
-        )
-
-    for day in range(30):
-        for _ in range(390):
-            merchant, _, typical = rng.choice(merchants)
-            hour = rng.choices([9, 12, 15, 19, 21], [12, 24, 11, 36, 17])[0]
-            second = day * DAY + hour * 3600 + rng.randrange(3600)
-            paise = max(200, round(typical * rng.lognormvariate(0, 0.45) / 50) * 50)
-            add(second, rng.randrange(1, 481), merchant, paise)
-
-        # Legitimate group purchases and busy counters can also trip a rule.
-        for _ in range(3):
-            merchant, _, typical = rng.choice(merchants)
-            start = day * DAY + rng.randrange(11, 21) * 3600 + rng.randrange(2400)
-            customer = rng.randrange(1, 481)
-            for i in range(rng.randint(3, 6)):
-                add(start + i * 34, customer, merchant, rng.choice([2500, 3500, 4500]))
-            for i in range(rng.randint(4, 8)):
-                add(start + i * 38, rng.randrange(1, 481), merchant, typical)
-
-        if day >= 18:
-            for _ in range(2):
-                merchant, _, typical = rng.choice(merchants)
-                start = day * DAY + rng.randrange(9, 21) * 3600 + rng.randrange(2400)
-                customer = rng.randrange(1, 481)
-                for i in range(rng.randint(6, 10)):
-                    add(start + i * 22, customer, merchant, 900 + 100 * (i % 5), "micro_burst")
-                add(start + 310, customer, merchant, typical * 9, "amount_spike")
-            merchant, _, typical = rng.choice(merchants)
-            start = day * DAY + 22 * 3600 + rng.randrange(2400)
-            for i in range(12):
-                add(start + i * 29, rng.randrange(1, 481), merchant, 2000, "merchant_burst")
-    return merchants, transactions
+def read_records(path, columns):
+    with path.open(encoding="utf-8-sig", newline="") as stream:
+        reader = csv.DictReader(stream)
+        if reader.fieldnames != list(columns):
+            raise ValueError(f"{path.name} must contain {', '.join(columns)} in order")
+        for row in reader:
+            if None in row or any(value is None for value in row.values()):
+                raise ValueError(f"{path.name} row {reader.line_num} has an unexpected number of fields")
+            yield reader.line_num, tuple(row[column].strip() for column in columns)
 
 
-def features(merchants, transactions):
-    with sqlite3.connect(":memory:") as db:
-        db.row_factory = sqlite3.Row
+def units(value, multiplier):
+    """Convert the published lakh or crore figures to whole base units."""
+    try:
+        total = Decimal(value.replace(",", "")) * multiplier
+    except InvalidOperation as error:
+        raise ValueError(f"invalid numeric value {value!r}") from error
+    if not total.is_finite() or total < 0 or total != total.to_integral_value():
+        raise ValueError(f"expected a nonnegative whole-unit count after conversion, got {value!r}")
+    return int(total)
+
+
+def read_monthly(path):
+    by_month = {}
+    for line, (period, count, value) in read_records(
+        path, ("month", "transactions_crore", "value_inr_crore")
+    ):
+        try:
+            month = date.fromisoformat(period + "-01")
+            if month.isoformat()[:7] != period:
+                raise ValueError("month must use YYYY-MM")
+            transactions = units(count, CRORE)
+            amount = units(value, CRORE)
+            if transactions == 0 or amount == 0:
+                raise ValueError("monthly transaction count and value must be positive")
+            if month in by_month:
+                raise ValueError(f"duplicate month {period}")
+        except ValueError as error:
+            raise ValueError(f"{path.name} row {line}: {error}") from error
+        by_month[month] = (month.isoformat(), transactions, amount)
+
+    if not by_month:
+        raise ValueError(f"{path.name} contains no monthly records")
+    months = sorted(by_month)
+    for previous, current in zip(months, months[1:]):
+        if current.year * 12 + current.month != previous.year * 12 + previous.month + 1:
+            raise ValueError(f"monthly series has a gap before {current:%Y-%m}")
+    return [by_month[month] for month in months]
+
+
+def read_fraud(path):
+    records = {}
+    for line, (year, incidents, amount) in read_records(
+        path, ("financial_year", "reported_incidents_lakh", "reported_amount_inr_crore")
+    ):
+        try:
+            start = int(year.split("-", 1)[0])
+            if start < 1900 or year != f"{start:04d}-{(start + 1) % 100:02d}":
+                raise ValueError("financial year must span consecutive years in YYYY-YY form")
+            if year in records:
+                raise ValueError(f"duplicate financial year {year}")
+            counts = units(incidents, LAKH)
+            value = units(amount, CRORE)
+        except ValueError as error:
+            raise ValueError(f"{path.name} row {line}: {error}") from error
+        records[year] = (year, counts, value)
+    if not records:
+        raise ValueError(f"{path.name} contains no fraud records")
+    return list(records.values())
+
+
+def analyze(monthly_records, fraud_records, threshold):
+    with closing(sqlite3.connect(":memory:")) as db:
         db.executescript("""
-            CREATE TABLE merchants (
-                merchant_id TEXT PRIMARY KEY, category TEXT NOT NULL, typical_paise INTEGER
+            CREATE TABLE upi_monthly (
+                month TEXT PRIMARY KEY,
+                transaction_count INTEGER NOT NULL CHECK (transaction_count > 0),
+                value_inr INTEGER NOT NULL CHECK (value_inr > 0)
             );
-            CREATE TABLE transactions (
-                transaction_id INTEGER PRIMARY KEY, txn_second INTEGER NOT NULL,
-                customer_id INTEGER NOT NULL, merchant_id TEXT NOT NULL,
-                amount_paise INTEGER NOT NULL, scenario TEXT NOT NULL
+            CREATE TABLE upi_fraud (
+                financial_year TEXT PRIMARY KEY,
+                reported_incidents INTEGER NOT NULL CHECK (reported_incidents >= 0),
+                reported_amount_inr INTEGER NOT NULL CHECK (reported_amount_inr >= 0)
             );
         """)
-        db.executemany("INSERT INTO merchants VALUES (?, ?, ?)", merchants)
-        db.executemany("INSERT INTO transactions VALUES (?, ?, ?, ?, ?, ?)", transactions)
-        return db.execute((ROOT / "analysis.sql").read_text(encoding="utf-8")).fetchall()
+        db.executemany("INSERT INTO upi_monthly VALUES (?, ?, ?)", monthly_records)
+        db.executemany("INSERT INTO upi_fraud VALUES (?, ?, ?)", fraud_records)
+        monthly = db.execute(
+            (ROOT / "analysis.sql").read_text(encoding="utf-8"), {"threshold": threshold}
+        )
+        annual = db.execute((ROOT / "fraud_rates.sql").read_text(encoding="utf-8"))
+        return (
+            ([column[0] for column in monthly.description], monthly.fetchall()),
+            ([column[0] for column in annual.description], annual.fetchall()),
+        )
 
 
-def fit_baseline(rows):
-    amounts = defaultdict(list)
-    for row in rows:
-        if row["txn_second"] < EVAL_START:
-            amounts[row["category"]].append(row["amount_paise"])
-    baseline = {}
-    for category, values in amounts.items():
-        center = median(values)
-        mad = median(abs(value - center) for value in values)
-        baseline[category] = (center, mad)
-    return baseline
-
-
-def score(rows, baseline, labels):
-    alerts = []
-    merchant_results = defaultdict(lambda: {"transactions": 0, "alerts": 0, "signal_points": 0})
-    actual = 0
-    for row in rows:
-        if row["txn_second"] < EVAL_START:
-            continue
-        merchant = row["merchant_id"]
-        stats = merchant_results[merchant]
-        stats["transactions"] += 1
-        scenario = labels[row["transaction_id"]]
-        actual += scenario != "normal"
-
-        center, mad = baseline[row["category"]]
-        amount_score = 0.67449 * (row["amount_paise"] - center) / mad if mad else 0.0
-        reasons = []
-        points = 0
-        if row["amount_paise"] <= 5000 and row["pair_micro_5m"] >= PAIR_LIMIT:
-            reasons.append("repeat micro-payments")
-            points += 2
-        if row["merchant_txns_10m"] >= MERCHANT_LIMIT:
-            reasons.append("merchant velocity")
-            points += 1
-        if amount_score >= OUTLIER_LIMIT:
-            reasons.append("high amount vs category")
-            points += 2
-        if not reasons:
-            continue
-
-        stats["alerts"] += 1
-        stats["signal_points"] += points
-        alerts.append({
-            "transaction_id": row["transaction_id"],
-            "timestamp_ist": (EPOCH + timedelta(seconds=row["txn_second"])).isoformat(),
-            "merchant": merchant,
-            "amount_inr": row["amount_paise"] / 100,
-            "pair_micro_5m": row["pair_micro_5m"],
-            "merchant_txns_10m": row["merchant_txns_10m"],
-            "amount_robust_z": round(amount_score, 2),
-            "signals": " / ".join(reasons),
-            "injected_scenario": scenario,
-        })
-
-    # Shrink small samples toward zero using 20 additional zero-signal transactions.
-    risk = [
-        {
-            "merchant": merchant, **stats,
-            "review_priority": round(100 * stats["signal_points"] / (5 * (stats["transactions"] + 20)), 2),
-        }
-        for merchant, stats in merchant_results.items()
-    ]
-    risk.sort(key=lambda row: (-row["review_priority"], row["merchant"]))
-    true_positive = sum(alert["injected_scenario"] != "normal" for alert in alerts)
-    metrics = {
-        "transactions": len(rows),
-        "baseline_transactions": sum(row["txn_second"] < EVAL_START for row in rows),
-        "evaluation_transactions": sum(row["txn_second"] >= EVAL_START for row in rows),
-        "merchants": len(risk),
-        "injected_evaluation_transactions": actual,
-        "alerts": len(alerts),
-        "true_positive": true_positive,
-        "false_positive": len(alerts) - true_positive,
-        "false_negative": actual - true_positive,
-        "precision": round(true_positive / len(alerts), 4) if alerts else None,
-        "recall": round(true_positive / actual, 4) if actual else None,
-    }
-    return alerts, risk, metrics
-
-
-def write_csv(path, rows):
+def write_csv(path, table):
+    columns, rows = table
     with path.open("w", encoding="utf-8", newline="") as stream:
-        writer = csv.DictWriter(stream, fieldnames=list(rows[0]))
-        writer.writeheader()
+        writer = csv.writer(stream)
+        writer.writerow(columns)
         writer.writerows(rows)
 
 
 def main():
-    output = ROOT / "output"
-    output.mkdir(exist_ok=True)
-    merchants, transactions = generate()
-    rows = features(merchants, transactions)
-    labels = {transaction[0]: transaction[-1] for transaction in transactions}
-    alerts, risk, metrics = score(rows, fit_baseline(rows), labels)
-    write_csv(output / "transaction_alerts.csv", alerts)
-    write_csv(output / "merchant_risk.csv", risk)
-    (output / "metrics.json").write_text(json.dumps(metrics, indent=2) + "\n", encoding="utf-8")
-    print(json.dumps(metrics, indent=2))
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--monthly", type=Path, default=ROOT / "data" / "upi_monthly.csv")
+    parser.add_argument("--fraud", type=Path, default=ROOT / "data" / "reported_upi_fraud.csv")
+    parser.add_argument("--output", type=Path, default=ROOT / "output")
+    parser.add_argument("--threshold", type=float, default=25.0, help="absolute percent gap for a monthly flag")
+    args = parser.parse_args()
+    if not math.isfinite(args.threshold) or args.threshold <= 0:
+        parser.error("--threshold must be a finite number greater than zero")
+
+    try:
+        monthly, fraud = analyze(read_monthly(args.monthly), read_fraud(args.fraud), args.threshold)
+    except (OSError, ValueError) as error:
+        parser.error(str(error))
+    args.output.mkdir(parents=True, exist_ok=True)
+    write_csv(args.output / "monthly_upi_metrics.csv", monthly)
+    write_csv(args.output / "financial_year_fraud_rates.csv", fraud)
+
+    flags = sum(row[-1] in ("Above baseline", "Below baseline") for row in monthly[1])
+    print(f"Analyzed {len(monthly[1])} official monthly records and {len(fraud[1])} complete financial years.")
+    if len(fraud[1]) == 0:
+        print("Annual rates require a complete April-to-March payment series and a fraud total for the same year.")
+    print(f"Flagged {flags} monthly volume deviations at the {args.threshold:g}% threshold.")
+    print(f"Reports written to {args.output}")
 
 
 if __name__ == "__main__":

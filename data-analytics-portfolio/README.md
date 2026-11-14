@@ -2,7 +2,7 @@
 
 | Project | Analysis | Dataset source |
 | --- | --- | --- |
-| [UPI Micro-Transaction & Merchant Fraud Anomaly Tracker](upi-fraud/) | Python, SQLite window functions, explainable review scores | Project-generated synthetic UPI-style transactions |
+| [UPI Payment Anomaly & Reported Fraud Tracker](upi-fraud/) | Python, SQLite window functions, monthly anomaly flags, reported fraud rates | Ministry of Finance parliamentary replies with NPCI and RBI figures |
 | [Quick-Commerce Rider SLA Breach & Rain-Surge Impact Tracker](quick-commerce-sla/) | SQL joins, SLA and staffing KPIs, Power BI | NOAA National Climatic Data Center via Vega Datasets (Seattle Weather), plus simulated orders and rider shifts |
 | [EV Charging Station Demand & Grid Peak-Load Optimizer](ev-charging/) | Python hourly load estimates, capacity scenarios, Power BI | City of Boulder Open Data (Electric Vehicle Charging Station Energy Consumption) |
 
