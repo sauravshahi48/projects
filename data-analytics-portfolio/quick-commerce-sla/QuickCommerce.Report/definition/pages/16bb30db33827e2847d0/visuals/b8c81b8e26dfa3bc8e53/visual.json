@@ -1,0 +1,37 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+  "name": "b8c81b8e26dfa3bc8e53",
+  "position": {
+    "x": 856,
+    "y": 110,
+    "z": 5000,
+    "width": 400,
+    "height": 83,
+    "tabOrder": 5000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Rider Workload"
+                    }
+                  },
+                  "Property": "Orders per Scheduled Rider-Hour"
+                }
+              },
+              "queryRef": "Rider Workload.Orders per Scheduled Rider-Hour",
+              "nativeQueryRef": "Orders per Scheduled Rider-Hour"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

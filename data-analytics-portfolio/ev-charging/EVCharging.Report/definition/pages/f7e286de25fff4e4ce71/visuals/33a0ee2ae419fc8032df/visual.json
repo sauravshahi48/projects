@@ -1,0 +1,37 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+  "name": "33a0ee2ae419fc8032df",
+  "position": {
+    "x": 24,
+    "y": 110,
+    "z": 3000,
+    "width": 608,
+    "height": 83,
+    "tabOrder": 3000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Station Hours"
+                    }
+                  },
+                  "Property": "Baseline Energy kWh"
+                }
+              },
+              "queryRef": "Station Hours.Baseline Energy kWh",
+              "nativeQueryRef": "Baseline Energy kWh"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

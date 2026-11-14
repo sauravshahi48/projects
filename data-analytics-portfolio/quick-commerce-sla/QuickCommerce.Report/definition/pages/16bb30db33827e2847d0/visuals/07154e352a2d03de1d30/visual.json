@@ -1,0 +1,37 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+  "name": "07154e352a2d03de1d30",
+  "position": {
+    "x": 24,
+    "y": 110,
+    "z": 3000,
+    "width": 400,
+    "height": 83,
+    "tabOrder": 3000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Rider Workload"
+                    }
+                  },
+                  "Property": "Hub-Hour Slots"
+                }
+              },
+              "queryRef": "Rider Workload.Hub-Hour Slots",
+              "nativeQueryRef": "Hub-Hour Slots"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+  "name": "5452f6c96bb782f2a119",
+  "position": {
+    "x": 440,
+    "y": 110,
+    "z": 4000,
+    "width": 400,
+    "height": 83,
+    "tabOrder": 4000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Rider Workload"
+                    }
+                  },
+                  "Property": "Staffing Review Slots"
+                }
+              },
+              "queryRef": "Rider Workload.Staffing Review Slots",
+              "nativeQueryRef": "Staffing Review Slots"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

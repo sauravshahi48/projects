@@ -1,0 +1,110 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+  "name": "7d113036d693b98eacba",
+  "position": {
+    "x": 780,
+    "y": 289,
+    "z": 7000,
+    "width": 476,
+    "height": 391,
+    "tabOrder": 7000
+  },
+  "visual": {
+    "visualType": "clusteredBarChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Station Hours"
+                    }
+                  },
+                  "Property": "station"
+                }
+              },
+              "queryRef": "Station Hours.station",
+              "nativeQueryRef": "station"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Station Hours"
+                    }
+                  },
+                  "Property": "Station Baseline Peak kW"
+                }
+              },
+              "queryRef": "Station Hours.Station Baseline Peak kW",
+              "nativeQueryRef": "Station Baseline Peak kW"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Station Hours"
+                    }
+                  },
+                  "Property": "Station Scenario Peak kW"
+                }
+              },
+              "queryRef": "Station Hours.Station Scenario Peak kW",
+              "nativeQueryRef": "Station Scenario Peak kW"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Station Hours"
+                  }
+                },
+                "Property": "Station Baseline Peak kW"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Estimated hourly peak by station (kW)'"
+                }
+              }
+            },
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+  "name": "7346cdec90d783b9402c",
+  "position": {
+    "x": 440,
+    "y": 110,
+    "z": 4000,
+    "width": 400,
+    "height": 83,
+    "tabOrder": 4000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Network Hours"
+                    }
+                  },
+                  "Property": "Scenario Peak kW"
+                }
+              },
+              "queryRef": "Network Hours.Scenario Peak kW",
+              "nativeQueryRef": "Scenario Peak kW"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

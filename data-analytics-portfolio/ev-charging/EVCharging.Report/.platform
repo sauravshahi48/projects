@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "EVCharging"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "8e343c0b-8803-40c0-a46d-d6217747f100"
+  }
+}

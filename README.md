@@ -1,4 +1,14 @@
-# Saurav Shahi AI and Python Portfolio
+# Saurav Shahi Project Portfolio
+
+## Data analytics portfolio
+
+- [UPI Micro-Transaction & Merchant Fraud Anomaly Tracker](data-analytics-portfolio/upi-fraud/) — Python, SQL window functions, and merchant review scoring.
+- [Quick-Commerce Rider SLA Breach & Rain-Surge Impact Tracker](data-analytics-portfolio/quick-commerce-sla/) — SQL joins, rider workload, and Power BI.
+- [EV Charging Station Demand & Grid Peak-Load Optimizer](data-analytics-portfolio/ev-charging/) — Python, hourly load estimates, and a Power BI capacity scenario.
+
+The [data analytics setup guide](data-analytics-portfolio/) lists the datasets and commands to reproduce each analysis.
+
+## AI and Python portfolio
 
 Three current personal projects for entry-level AI/ML and Python roles, with runnable applications, APIs, tests and reproducible evaluation.
 

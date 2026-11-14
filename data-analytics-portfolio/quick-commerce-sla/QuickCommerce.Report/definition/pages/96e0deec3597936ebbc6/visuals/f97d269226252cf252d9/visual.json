@@ -1,0 +1,124 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+  "name": "f97d269226252cf252d9",
+  "position": {
+    "x": 614,
+    "y": 289,
+    "z": 9000,
+    "width": 642,
+    "height": 354,
+    "tabOrder": 9000
+  },
+  "visual": {
+    "visualType": "clusteredColumnChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Delivery SLA"
+                    }
+                  },
+                  "Property": "rain_band"
+                }
+              },
+              "queryRef": "Delivery SLA.rain_band",
+              "nativeQueryRef": "rain_band"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Delivery SLA"
+                    }
+                  },
+                  "Property": "Avg Dispatch Minutes"
+                }
+              },
+              "queryRef": "Delivery SLA.Avg Dispatch Minutes",
+              "nativeQueryRef": "Avg Dispatch Minutes"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Delivery SLA"
+                    }
+                  },
+                  "Property": "Avg Pickup Minutes"
+                }
+              },
+              "queryRef": "Delivery SLA.Avg Pickup Minutes",
+              "nativeQueryRef": "Avg Pickup Minutes"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Delivery SLA"
+                    }
+                  },
+                  "Property": "Avg Travel Minutes"
+                }
+              },
+              "queryRef": "Delivery SLA.Avg Travel Minutes",
+              "nativeQueryRef": "Avg Travel Minutes"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Delivery SLA"
+                  }
+                },
+                "Property": "rain_band"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Average delivery stage time (minutes)'"
+                }
+              }
+            },
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

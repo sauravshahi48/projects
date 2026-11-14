@@ -1,0 +1,11 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	discourageImplicitMeasures
+	sourceQueryCulture: en-US
+
+	annotation PBI_QueryOrder = ["Network Hours", "Station Hours"]
+	annotation __PBI_TimeIntelligenceEnabled = 0
+
+ref table 'Network Hours'
+ref table 'Station Hours'

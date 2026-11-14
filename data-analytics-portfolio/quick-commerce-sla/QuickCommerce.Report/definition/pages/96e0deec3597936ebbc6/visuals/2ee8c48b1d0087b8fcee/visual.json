@@ -1,0 +1,37 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+  "name": "2ee8c48b1d0087b8fcee",
+  "position": {
+    "x": 856,
+    "y": 110,
+    "z": 5000,
+    "width": 400,
+    "height": 83,
+    "tabOrder": 5000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Delivery SLA"
+                    }
+                  },
+                  "Property": "Avg Travel Minutes"
+                }
+              },
+              "queryRef": "Delivery SLA.Avg Travel Minutes",
+              "nativeQueryRef": "Avg Travel Minutes"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

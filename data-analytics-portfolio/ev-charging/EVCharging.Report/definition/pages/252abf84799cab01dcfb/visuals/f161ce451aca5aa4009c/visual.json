@@ -1,0 +1,110 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+  "name": "f161ce451aca5aa4009c",
+  "position": {
+    "x": 808,
+    "y": 289,
+    "z": 8000,
+    "width": 448,
+    "height": 354,
+    "tabOrder": 8000
+  },
+  "visual": {
+    "visualType": "clusteredColumnChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Network Hours"
+                    }
+                  },
+                  "Property": "hour_of_day"
+                }
+              },
+              "queryRef": "Network Hours.hour_of_day",
+              "nativeQueryRef": "hour_of_day"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Network Hours"
+                    }
+                  },
+                  "Property": "Baseline Hours Over Capacity"
+                }
+              },
+              "queryRef": "Network Hours.Baseline Hours Over Capacity",
+              "nativeQueryRef": "Baseline Hours Over Capacity"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Network Hours"
+                    }
+                  },
+                  "Property": "Scenario Hours Over Capacity"
+                }
+              },
+              "queryRef": "Network Hours.Scenario Hours Over Capacity",
+              "nativeQueryRef": "Scenario Hours Over Capacity"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Network Hours"
+                  }
+                },
+                "Property": "hour_of_day"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Number of hours above planning capacity'"
+                }
+              }
+            },
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}
